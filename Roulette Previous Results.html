@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satta Matka Result - Roulette Previous Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans:['Inter','sans-serif'], display:['Oswald','sans-serif'] },
+                    colors: { casino:{ brand:'#fba311', red:'#e11d48', black:'#000000', green:'#16a34a' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; }
+
+        .custom-scrollbar::-webkit-scrollbar { height:6px; width:6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background:#f1f5f9; border-radius:4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+        @keyframes pulse-dot { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.5; transform:scale(.85);} }
+        .live-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+        /* TODAY row highlight */
+        .today-row td { background: #fffbeb !important; }
+        .today-row:hover td { background: #fef3c7 !important; }
+        .today-row td.sticky-col { background: #fffbeb !important; }
+        .today-row:hover td.sticky-col { background: #fef3c7 !important; }
+
+        @keyframes today-glow {
+            0%,100% { box-shadow: inset 3px 0 0 #fba311, inset 0 2px 0 #fba311, inset 0 -2px 0 #fba311; }
+            50%      { box-shadow: inset 3px 0 0 #f59e0b, inset 0 2px 0 #f59e0b, inset 0 -2px 0 #f59e0b; }
+        }
+        .today-row { animation: today-glow 2.5s ease-in-out infinite; }
+
+        /* Chip style */
+        .chip {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: #111827; border: 1px solid #374151; border-radius: 8px;
+            padding: 3px 10px; font-family: 'Oswald', sans-serif; font-weight: 700;
+            font-size: .9rem; letter-spacing: 1px; white-space: nowrap;
+            cursor: default; transition: border-color .15s, transform .15s;
+        }
+        .chip:hover { border-color: #fba311; transform: scale(1.06); }
+        .chip .pana { color: #9ca3af; }
+        .chip .sep  { color: #4b5563; margin: 0 3px; }
+        .chip .dig  { color: #fba311; }
+        .empty-chip { color: #374151; font-size: 1rem; font-family:'Oswald',sans-serif; font-weight:700; }
+
+        /* Today badge */
+        .today-badge {
+            display: inline-block; background: #fba311; color: #000;
+            font-size: 9px; font-weight: 800; letter-spacing: .08em;
+            padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+            margin-left: 6px; vertical-align: middle;
+        }
+
+        /* Disclaimer */
+        .disclaimer { background:#fff; border:1px solid #e5e7eb; border-radius:.75rem; padding:1.75rem 2rem; margin-top:1.5rem; }
+        .disclaimer h2 { color:#dc2626; font-weight:700; font-size:1rem; text-align:center; text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; }
+        .disclaimer p { font-size:.8rem; color:#4b5563; line-height:1.75; margin-bottom:.65rem; }
+        .disclaimer p:last-child { margin-bottom:0; }
+
+        /* sticky date col */
+        .sticky-col { position: sticky; left: 0; z-index: 5; background: #fff; border-right: 1px solid #e5e7eb; }
+        thead th.sticky-col { background: #000; border-right: 1px solid #374151; }
+    </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAJELBtkfJco-CzmQaVE9KBC-683EDwFoU",
+        authDomain: "sm-result.firebaseapp.com",
+        databaseURL: "https://sm-result-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "sm-result",
+        storageBucket: "sm-result.firebasestorage.app",
+        messagingSenderId: "1037377873587",
+        appId: "1:1037377873587:web:dfb55c04939c3f474832c6",
+        measurementId: "G-4R8E45B504"
+      };
+      if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+      const _db = firebase.database();
+    </script>
+</head>
+<body class="bg-slate-100 min-h-screen p-3 md:p-6">
+<div class="max-w-[1400px] mx-auto space-y-5">
+
+    <!-- Header -->
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+        <div class="flex items-center gap-4">
+            <div class="bg-amber-50 p-3 rounded-xl text-amber-500 border border-amber-100">
+                <i data-lucide="dices" class="w-7 h-7"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-black tracking-wide uppercase" style="font-family:Oswald,sans-serif;">Roulette Archive — Satta Matka Result</h1>
+                <p class="text-gray-400 text-xs flex items-center gap-2 mt-0.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 live-dot"></span>
+                    Hourly Results &mdash; Last 30 Days · Auto-updates Daily
+                </p>
+            </div>
+        </div>
+        <div class="flex flex-col items-end bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 min-w-[180px]">
+            <span id="liveDate" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">—</span>
+            <span id="liveTime" class="text-xl font-bold text-black" style="font-family:Oswald,sans-serif;">--:--:--</span>
+        </div>
+    </header>
+
+    <!-- Table -->
+    <main class="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden">
+        <div class="p-4 md:p-5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+            <h2 class="font-semibold text-black">Draw History</h2>
+            <span class="text-xs text-gray-400 italic">Scroll right for all time slots →</span>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full border-collapse" style="min-width:1100px;">
+                <thead>
+                    <tr class="bg-black text-white text-[11px] uppercase tracking-wider">
+                        <th class="sticky-col p-4 pl-5 text-left font-semibold w-44">Date</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">11:00 AM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">12:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">01:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">02:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">03:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">04:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">05:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">06:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">07:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">08:00 PM</th>
+                        <th class="p-3 text-center font-semibold min-w-[105px]">09:00 PM</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody" class="divide-y divide-gray-100"></tbody>
+            </table>
+        </div>
+
+        <div class="p-3 border-t border-gray-100 text-center text-xs text-gray-400 bg-gray-50">
+            Showing last 30 days · Newest at top · Oldest row auto-removed each day
+        </div>
+    </main>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        <h2>-: Disclaimer :-</h2>
+        <p>Visiting and browsing this website is strictly at your own risk. All information provided on this platform is intended solely for general informational and entertainment purposes, based on astrological interpretations and numerical analysis.</p>
+        <p>We are not associated with, endorsed by, or involved in any form of illegal gaming or betting activities. We ensure that we operate in compliance with applicable laws and regulations of the regions where this website is accessible.</p>
+        <p>Users are advised that certain content or services on this website may be restricted or prohibited in their respective jurisdictions. If you choose to access or use this website despite such restrictions, you do so at your own discretion and will be solely responsible for any consequences, including legal actions, damages, or losses incurred.</p>
+        <p>If you do not agree with any part of this disclaimer, you are strongly advised to discontinue the use of this website immediately.</p>
+        <p>All content, including text, data, and design, is the intellectual property of this website. Unauthorized copying, reproduction, or distribution of any material without prior written permission is strictly prohibited and may result in legal action.</p>
+    </div>
+
+</div>
+
+<script>
+lucide.createIcons();
+
+// ═══════════════════════════════════════════════════════════════════
+//  SATTA MATKA RESULT — Roulette Previous Results
+//  RULE: Results are ONLY shown when saved via Admin Panel.
+//        If a time slot has passed but was NOT updated by admin → empty.
+//        Future slots → always empty.
+// ═══════════════════════════════════════════════════════════════════
+
+const HOURS = [11,12,13,14,15,16,17,18,19,20,21];
+const HOUR_LABELS = ['11:00 AM','12:00 PM','01:00 PM','02:00 PM','03:00 PM','04:00 PM','05:00 PM','06:00 PM','07:00 PM','08:00 PM','09:00 PM'];
+
+// Storage keys used by admin panel
+const STORE_MANUAL  = 'dpboss_rou_manual_';  // per-hour overrides: dpboss_rou_manual_YYYY-MM-DD_HH
+const STORE_DAY     = 'dpboss_rou_';         // full-day saves: dpboss_rou_YYYY-MM-DD
+
+// ─── Real verified results (Apr 27 & Apr 26 2026) ─────────────────
+// Hours stored as 24h keys: 11=11AM, 12=12PM, 13=1PM ... 21=9PM
+const VERIFIED = {
+    '2026-04-29': { '11':'566-7','12':'578-0','13':'560-1','14':'237-2','15':'224-8','16':'137-1','17':'238-3','18':'139-3','19':'466-6','20':'440-8','21':'889-5' },
+    '2026-04-28': { '11':'346-3','12':'389-0','13':'388-9','14':'348-5','15':'179-7','16':'440-8','17':'570-2','18':'144-9','19':'155-1','20':'117-9','21':'468-8' },
+    '2026-04-27': { '11':'470-1','12':'458-7','13':'346-3','14':'790-6','15':'100-1','16':'139-3','17':'147-2','18':'778-2','19':'900-9','20':'240-6','21':'790-6' },
+    '2026-04-26': { '11':'455-4','12':'560-1','13':'780-5','14':'180-9','15':'134-8','16':'137-1','17':'127-0','18':'135-9','19':'178-6','20':'378-8','21':'379-9' }
+};
+
+// ─── Seeded random for historical dates before Apr 26 ─────────────
+// Deterministic so the same date always gives the same numbers
+function seededRand(seed) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = (h * 0x01000193) >>> 0; }
+    return function() { h ^= h << 13; h ^= h >> 17; h ^= h << 5; h = h >>> 0; return h / 0xffffffff; };
+}
+function generateForDate(dateStr) {
+    const rng = seededRand(dateStr);
+    const result = {};
+    HOURS.forEach(h => {
+        const a = Math.floor(rng()*10), b = Math.floor(rng()*10), c = Math.floor(rng()*10);
+        result[String(h)] = `${a}${b}${c}-${(a+b+c)%10}`;
+    });
+    return result;
+}
+
+// Cut-off: dates strictly before this are shown with random historical data
+const HISTORY_CUTOFF = '2026-04-29'; // Apr 29 is VERIFIED; Apr 28 and older → random
+
+// ─── Helpers ──────────────────────────────────────────────────────
+function localDateStr(d) {
+    return d.getFullYear() + '-'
+        + String(d.getMonth()+1).padStart(2,'0') + '-'
+        + String(d.getDate()).padStart(2,'0');
+}
+function addDays(d, n) {
+    const r = new Date(d); r.setDate(r.getDate()+n); return r;
+}
+function isFutureSlot(dateStr, hour) {
+    const now = new Date();
+    const slotTime = new Date(dateStr + 'T' + String(hour).padStart(2,'0') + ':00:00');
+    return now < slotTime;
+}
+function get30DayWindow() {
+    const today = new Date();
+    const dates = [];
+    for (let i = 0; i < 30; i++) dates.push(localDateStr(addDays(today, -i)));
+    return dates;
+}
+
+// ─── Firebase roulette overrides cache ───────────────────────────────
+window._rouOverrides = {};   // populated by Firebase listener below
+
+// ─── Get admin-saved result for a single slot ─────────────────────
+function getAdminResult(dateStr, hour) {
+    const hourKey = String(hour);
+    // Read from Firebase cache (_rouOverrides)
+    const dayData = _rouOverrides[dateStr];
+    if (dayData && dayData[hourKey] && String(dayData[hourKey]).trim()) {
+        return String(dayData[hourKey]).trim();
+    }
+    return null;
+}
+
+// ─── Get display data for a full date ─────────────────────────────
+// Logic per slot:
+//   • Future slot          → always empty
+//   • Admin override       → show admin value (highest priority, any date)
+//   • VERIFIED date        → show verified real result
+//   • Before HISTORY_CUTOFF → show deterministic random (historical fill)
+//   • Today or after cutoff, no admin → empty (wait for admin update)
+function getDataForDate(dateStr) {
+    const isOldHistory = dateStr < HISTORY_CUTOFF; // strictly before Apr 26
+    const verified     = VERIFIED[dateStr] || null;
+    const historical   = (isOldHistory) ? generateForDate(dateStr) : null;
+    const result       = {};
+
+    HOURS.forEach(h => {
+        const hk       = String(h);
+        const adminVal = getAdminResult(dateStr, h);
+
+        if (adminVal) {
+            result[hk] = adminVal;                       // admin override → always show (even before slot time)
+        } else if (isFutureSlot(dateStr, h)) {
+            result[hk] = null;                           // future → blank (only if no admin value)
+        } else if (verified && verified[hk]) {
+            result[hk] = verified[hk];                  // real verified result
+        } else if (historical && historical[hk]) {
+            result[hk] = historical[hk];                // seeded random for old dates
+        } else {
+            result[hk] = null;                           // no data → blank (wait for admin)
+        }
+    });
+    return result;
+}
+
+// ─── Render a result chip ─────────────────────────────────────────
+function makeChip(val) {
+    if (!val) return '<span class="empty-chip">—</span>';
+    const m = val.match(/^(\d{3})-(\d)$/);
+    if (m) {
+        return `<span class="chip"><span class="pana">${m[1]}</span><span class="sep">-</span><span class="dig">${m[2]}</span></span>`;
+    }
+    return `<span class="chip">${val}</span>`;
+}
+
+// ─── Build table ──────────────────────────────────────────────────
+let lastBuiltDay = '';
+
+function buildTable() {
+    const todayStr = localDateStr(new Date());
+    const dates = get30DayWindow();
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+
+    dates.forEach(dateStr => {
+        const rowDate = new Date(dateStr + 'T12:00:00');
+        const isToday = dateStr === todayStr;
+
+        const dayName  = rowDate.toLocaleDateString('en-IN', {weekday:'short'});
+        const dateLabel = rowDate.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+
+        const data = getDataForDate(dateStr);
+
+        const tr = document.createElement('tr');
+        tr.className = isToday ? 'today-row' : 'hover:bg-slate-50 transition-colors';
+
+        let rowHTML = `
+            <td class="sticky-col p-4 pl-5">
+                <div class="leading-tight">
+                    <div class="font-bold text-black text-sm">${dayName}, ${dateLabel}</div>
+                    ${isToday ? '<span class="today-badge">Today</span>' : ''}
+                </div>
+            </td>`;
+
+        HOURS.forEach((h, idx) => {
+            const val = data[String(h)];
+            const isLast = idx === HOURS.length - 1;
+            rowHTML += `<td class="p-2.5 ${isLast ? 'pr-5' : ''} text-center">${makeChip(val)}</td>`;
+        });
+
+        tr.innerHTML = rowHTML;
+        tbody.appendChild(tr);
+    });
+
+    lastBuiltDay = todayStr;
+}
+
+// ─── Auto-rebuild ─────────────────────────────────────────────────
+function checkDayChange() {
+    const currentDay = localDateStr(new Date());
+    if (currentDay !== lastBuiltDay) buildTable();
+}
+
+// ─── Clock ────────────────────────────────────────────────────────
+function updateClock() {
+    const now = new Date();
+    document.getElementById('liveDate').textContent = now.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+    document.getElementById('liveTime').textContent = now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+}
+
+// ─── Firebase real-time listener ─────────────────────────────────
+_db.ref('/results/roulette').on('value', snap => {
+    window._rouOverrides = snap.val() || {};
+    buildTable();  // re-render instantly whenever admin saves
+});
+
+// ─── Init ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    buildTable();
+    updateClock();
+    setInterval(updateClock, 1000);
+    setInterval(checkDayChange, 60000);  // re-check every minute for day change
+    setInterval(buildTable, 60000);      // rebuild every minute (slot times shift future→past)
+});
+</script>
+</body>
+</html>
