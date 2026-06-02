@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satta Matka Result Admin Panel</title>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -62,23 +63,7 @@
   ::-webkit-scrollbar-thumb { background:#333; border-radius:3px; }
   ::-webkit-scrollbar-thumb:hover { background:#fba311; }
 </style>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyAJELBtkfJco-CzmQaVE9KBC-683EDwFoU",
-        authDomain: "sm-result.firebaseapp.com",
-        databaseURL: "https://sm-result-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "sm-result",
-        storageBucket: "sm-result.firebasestorage.app",
-        messagingSenderId: "1037377873587",
-        appId: "1:1037377873587:web:dfb55c04939c3f474832c6",
-        measurementId: "G-4R8E45B504"
-      };
-      if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-      const _db = firebase.database();
-    </script>
+    <script src="db.js"></script>
 </head>
 <body>
 
@@ -117,18 +102,21 @@
     <div class="p-4 border-b border-[#222] text-center">
       <div id="sb-time" class="text-lg font-bold" style="color:#fba311">--:--:--</div>
       <div id="sb-date" class="text-xs text-gray-500"></div>
-      <div class="mt-2 text-xs text-gray-600">4AM clear in: <span id="clear-timer" class="text-yellow-400">--:--:--</span></div>
+      <div class="mt-2 text-xs text-gray-600">6AM auto-clear in: <span id="clear-timer" class="text-yellow-400">--:--:--</span></div>
     </div>
 
+    <div class="nav-section">Markets — Morning</div>
+    <div class="nav-item" onclick="showPane('satpura_morning',this)"><i class="fas fa-sun fa-fw" style="color:#e91e63"></i> Satpura Morning</div>
+
     <div class="nav-section">Markets — Day</div>
-    <div class="nav-item active" onclick="showPane('sridevi_day',this)"><i class="fas fa-sun fa-fw"></i> Sridevi Day</div>
+    <div class="nav-item active" onclick="showPane('sridevi_day',this)"><i class="fas fa-sun fa-fw"></i> Sridevi</div>
     <div class="nav-item" onclick="showPane('time_bazar',this)"><i class="fas fa-clock fa-fw"></i> Time Bazar</div>
     <div class="nav-item" onclick="showPane('madhur_day',this)"><i class="fas fa-sun fa-fw"></i> Madhur Day</div>
     <div class="nav-item" onclick="showPane('supreme_day',this)"><i class="fas fa-sun fa-fw"></i> Supreme Day</div>
     <div class="nav-item" onclick="showPane('milan_day',this)"><i class="fas fa-sun fa-fw"></i> Milan Day</div>
     <div class="nav-item" onclick="showPane('satpura_day',this)"><i class="fas fa-sun fa-fw"></i> Satpura Day</div>
     <div class="nav-item" onclick="showPane('rajdhani_day',this)"><i class="fas fa-sun fa-fw"></i> Rajdhani Day</div>
-    <div class="nav-item" onclick="showPane('kalyan_day',this)"><i class="fas fa-sun fa-fw"></i> Kalyan Day</div>
+    <div class="nav-item" onclick="showPane('kalyan_day',this)"><i class="fas fa-sun fa-fw"></i> Kalyan</div>
 
     <div class="nav-section">Markets — Night</div>
     <div class="nav-item" onclick="showPane('sridevi_night',this)"><i class="fas fa-moon fa-fw"></i> Sridevi Night</div>
@@ -141,7 +129,7 @@
     <div class="nav-item" onclick="showPane('main_bazar',this)"><i class="fas fa-moon fa-fw"></i> Main Bazar</div>
 
     <div class="nav-section">Other</div>
-    <div class="nav-item" onclick="showPane('roulette',this)"><i class="fas fa-dice fa-fw"></i> Roulette</div>
+    <div class="nav-item" onclick="showPane('roulette',this)"><i class="fas fa-dice fa-fw"></i> SATPURA STARLINE</div>
     <div class="nav-item" onclick="showPane('settings',this)"><i class="fas fa-cog fa-fw"></i> Settings</div>
 
     <div class="p-4 mt-auto border-t border-[#222]">
@@ -157,17 +145,13 @@
     <!-- Header bar -->
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 id="pane-title" class="text-2xl font-bold">Sridevi Day</h1>
+        <h1 id="pane-title" class="text-2xl font-bold">Sridevi</h1>
         <p class="text-gray-500 text-sm">Edit today's result — changes apply to Index & Calendar</p>
       </div>
       <div class="flex gap-3">
         <button onclick="saveAll()"
           class="bg-[#fba311] text-black px-5 py-2.5 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-yellow-400 transition-all flex items-center gap-2 shadow-lg">
           <i class="fas fa-save"></i> Save All
-        </button>
-        <button onclick="clearIndex()"
-          class="bg-[#1c1c1c] border border-red-700 text-red-400 px-5 py-2.5 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-red-900 hover:text-white transition-all flex items-center gap-2">
-          <i class="fas fa-eraser"></i> Clear Index
         </button>
         <button onclick="clearAllData()"
           class="bg-red-900 border border-red-500 text-red-200 px-5 py-2.5 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-red-700 hover:text-white transition-all flex items-center gap-2">
@@ -183,10 +167,52 @@
     </div>
 
     <!-- ── MARKET PANES ── -->
+    <div id="pane-satpura_morning" class="pane">
+      <div class="admin-card" style="border-color:#c2185b">
+        <div class="text-xs uppercase tracking-widest mb-1" style="color:#e91e63">Satpura Morning &nbsp;·&nbsp; 09:00 AM – 10:00 AM</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span style="color:#e91e63">Satpura_Results_Calendar.html</span> (Morning section) &nbsp;·&nbsp; <span style="color:#4ade80;font-weight:600">Open Mon–Sun (all days)</span></div>
+        
+        <div class="flex flex-col items-center gap-6">
+          <!-- Preview -->
+          <div class="bg-[#0a0a0a] border border-[#333] rounded-xl px-8 py-5 text-center">
+            <div class="text-xs text-gray-600 uppercase tracking-widest mb-2">Preview</div>
+            <div class="flex items-center gap-4">
+              <div id="prev-satpura_morning-p1" class="text-gray-400 text-lg font-bold font-mono">---</div>
+              <div id="prev-satpura_morning-j"  class="text-3xl font-extrabold" style="color:#e91e63">--</div>
+              <div id="prev-satpura_morning-p2" class="text-gray-400 text-lg font-bold font-mono">---</div>
+            </div>
+          </div>
+          <!-- Inputs -->
+          <div class="flex items-center gap-4">
+            <div class="text-center">
+              <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
+              <input id="in-satpura_morning-p1" type="text" maxlength="3" placeholder="---"
+                class="pana-input"
+                oninput="document.getElementById('prev-satpura_morning-p1').textContent=this.value||'---';calcJodi('satpura_morning')">
+            </div>
+            <div class="text-center">
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
+              <input id="in-satpura_morning-j" type="text" maxlength="2" placeholder="--"
+                class="jodi-input" style="border-color:#e91e63;color:#e91e63;cursor:not-allowed;opacity:0.85;"
+                readonly title="Auto-calculated from panas">
+            </div>
+            <div class="text-center">
+              <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
+              <input id="in-satpura_morning-p2" type="text" maxlength="3" placeholder="---"
+                class="pana-input"
+                oninput="document.getElementById('prev-satpura_morning-p2').textContent=this.value||'---';calcJodi('satpura_morning')">
+            </div>
+          </div>
+          <div class="text-xs text-gray-600">
+            Saving will update the Index panel <i>and</i> today's date in the linked Calendar.
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="pane-sridevi_day" class="pane active">
       <div class="admin-card">
-        <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Sridevi Day &nbsp;·&nbsp; 11:48 AM – 12:48 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Sridevi_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Sridevi &nbsp;·&nbsp; 11:48 AM – 12:48 PM</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Sridevi_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -204,19 +230,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-sridevi_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-sridevi_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-sridevi_day-p1').textContent=this.value||'---';calcJodi('sridevi_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-sridevi_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-sridevi_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-sridevi_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-sridevi_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-sridevi_day-p2').textContent=this.value||'---';calcJodi('sridevi_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -228,7 +254,7 @@
     <div id="pane-time_bazar" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Time Bazar &nbsp;·&nbsp; 01:10 PM – 02:10 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Time_Bazar_-_Main_Bazar.html</span> (Day section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Time_Bazar_-_Main_Bazar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -246,19 +272,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-time_bazar-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-time_bazar-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-time_bazar-p1').textContent=this.value||'---';calcJodi('time_bazar')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-time_bazar-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-time_bazar-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-time_bazar-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-time_bazar-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-time_bazar-p2').textContent=this.value||'---';calcJodi('time_bazar')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -270,7 +296,7 @@
     <div id="pane-madhur_day" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Madhur Day &nbsp;·&nbsp; 01:40 PM – 02:40 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Madhur_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Madhur_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -288,19 +314,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-madhur_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-madhur_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-madhur_day-p1').textContent=this.value||'---';calcJodi('madhur_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-madhur_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-madhur_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-madhur_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-madhur_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-madhur_day-p2').textContent=this.value||'---';calcJodi('madhur_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -312,7 +338,7 @@
     <div id="pane-milan_day" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Milan Day &nbsp;·&nbsp; 03:10 PM – 05:10 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Milan_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Milan_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -330,19 +356,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-milan_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-milan_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-milan_day-p1').textContent=this.value||'---';calcJodi('milan_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-milan_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-milan_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-milan_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-milan_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-milan_day-p2').textContent=this.value||'---';calcJodi('milan_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -354,7 +380,7 @@
     <div id="pane-rajdhani_day" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Rajdhani Day &nbsp;·&nbsp; 03:45 PM – 05:45 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Rajdhani_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Rajdhani_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -372,19 +398,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-rajdhani_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-rajdhani_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-rajdhani_day-p1').textContent=this.value||'---';calcJodi('rajdhani_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-rajdhani_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-rajdhani_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-rajdhani_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-rajdhani_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-rajdhani_day-p2').textContent=this.value||'---';calcJodi('rajdhani_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -396,7 +422,7 @@
     <div id="pane-satpura_day" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Satpura Day</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Satpura_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Satpura_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -414,19 +440,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-satpura_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-satpura_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-satpura_day-p1').textContent=this.value||'---';calcJodi('satpura_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-satpura_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-satpura_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-satpura_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-satpura_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-satpura_day-p2').textContent=this.value||'---';calcJodi('satpura_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -438,7 +464,7 @@
     <div id="pane-supreme_day" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Supreme Day &nbsp;·&nbsp; 09:15 AM – 11:15 AM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Supreme_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Supreme_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -456,19 +482,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-supreme_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-supreme_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-supreme_day-p1').textContent=this.value||'---';calcJodi('supreme_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-supreme_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-supreme_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-supreme_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-supreme_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-supreme_day-p2').textContent=this.value||'---';calcJodi('supreme_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -479,8 +505,8 @@
     </div>
     <div id="pane-kalyan_day" class="pane">
       <div class="admin-card">
-        <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Kalyan Day &nbsp;·&nbsp; 03:45 PM – 05:45 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Kalyan_Results_Calendar.html</span> (Day section)</div>
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Kalyan &nbsp;·&nbsp; 03:45 PM – 05:45 PM</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Kalyan_Results_Calendar.html</span> (Day section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -498,19 +524,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-kalyan_day-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-kalyan_day-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-kalyan_day-p1').textContent=this.value||'---';calcJodi('kalyan_day')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-kalyan_day-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-kalyan_day-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-kalyan_day-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-kalyan_day-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-kalyan_day-p2').textContent=this.value||'---';calcJodi('kalyan_day')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -522,7 +548,7 @@
     <div id="pane-sridevi_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Sridevi Night &nbsp;·&nbsp; 07:22 PM – 08:22 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Sridevi_Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Sridevi_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -540,19 +566,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-sridevi_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-sridevi_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-sridevi_night-p1').textContent=this.value||'---';calcJodi('sridevi_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-sridevi_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-sridevi_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-sridevi_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-sridevi_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-sridevi_night-p2').textContent=this.value||'---';calcJodi('sridevi_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -564,7 +590,7 @@
     <div id="pane-madhur_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Madhur Night &nbsp;·&nbsp; 08:39 PM – 10:39 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Madhur_Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Madhur_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -582,19 +608,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-madhur_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-madhur_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-madhur_night-p1').textContent=this.value||'---';calcJodi('madhur_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-madhur_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-madhur_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-madhur_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-madhur_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-madhur_night-p2').textContent=this.value||'---';calcJodi('madhur_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -606,7 +632,7 @@
     <div id="pane-supreme_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Supreme Night &nbsp;·&nbsp; 08:51 PM – 10:52 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Supreme__Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Supreme_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -624,19 +650,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-supreme_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-supreme_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-supreme_night-p1').textContent=this.value||'---';calcJodi('supreme_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-supreme_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-supreme_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-supreme_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-supreme_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-supreme_night-p2').textContent=this.value||'---';calcJodi('supreme_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -648,7 +674,7 @@
     <div id="pane-milan_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Milan Night &nbsp;·&nbsp; 09:21 PM – 11:21 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Milan_Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Milan_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -666,19 +692,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-milan_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-milan_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-milan_night-p1').textContent=this.value||'---';calcJodi('milan_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-milan_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-milan_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-milan_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-milan_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-milan_night-p2').textContent=this.value||'---';calcJodi('milan_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -690,7 +716,7 @@
     <div id="pane-satpura_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Satpura Night &nbsp;·&nbsp; 09:10 PM – 11:10 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Satpura_Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Satpura_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-green-400 font-semibold">Open Mon–Sun (all days)</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -708,19 +734,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-satpura_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-satpura_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-satpura_night-p1').textContent=this.value||'---';calcJodi('satpura_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-satpura_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-satpura_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-satpura_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-satpura_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-satpura_night-p2').textContent=this.value||'---';calcJodi('satpura_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -732,7 +758,7 @@
     <div id="pane-rajdhani_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Rajdhani Night &nbsp;·&nbsp; 09:42 PM – 11:52 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Rajdhani_Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Rajdhani_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Saturday + Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -750,19 +776,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-rajdhani_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-rajdhani_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-rajdhani_night-p1').textContent=this.value||'---';calcJodi('rajdhani_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-rajdhani_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-rajdhani_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-rajdhani_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-rajdhani_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-rajdhani_night-p2').textContent=this.value||'---';calcJodi('rajdhani_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -774,7 +800,7 @@
     <div id="pane-kalyan_night" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Kalyan Night &nbsp;·&nbsp; 09:45 PM – 11:45 PM</div>
-        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Kalyan_Results_Calendar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-4">Links to: <span class="text-[#fba311]">Kalyan_Results_Calendar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Saturday + Sunday</span></div>
         
         <div class="flex flex-col items-center gap-6">
           <!-- Preview -->
@@ -792,19 +818,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-kalyan_night-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-kalyan_night-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-kalyan_night-p1').textContent=this.value||'---';calcJodi('kalyan_night')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-kalyan_night-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-kalyan_night-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-kalyan_night-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-kalyan_night-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-kalyan_night-p2').textContent=this.value||'---';calcJodi('kalyan_night')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -816,7 +842,7 @@
     <div id="pane-main_bazar" class="pane">
       <div class="admin-card">
         <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Main Bazar &nbsp;·&nbsp; 10:00 PM – 12:10 AM</div>
-        <div class="text-sm text-gray-400 mb-2">Links to: <span class="text-[#fba311]">Time_Bazar_-_Main_Bazar.html</span> (Night section)</div>
+        <div class="text-sm text-gray-400 mb-2">Links to: <span class="text-[#fba311]">Time_Bazar_-_Main_Bazar.html</span> (Night section) &nbsp;·&nbsp; <span class="text-red-400 font-semibold">Closed Saturday + Sunday</span></div>
         <div class="text-xs text-yellow-400 bg-yellow-900/30 border border-yellow-700 rounded-lg px-3 py-2 mb-4 flex items-start gap-2">
           <i class="fas fa-clock mt-0.5 flex-shrink-0"></i>
           <span><strong>Late-Night Rule:</strong> If you save between <strong>12:00 AM – 12:15 AM</strong>, the result is automatically assigned to <strong>yesterday's calendar date</strong> (the night Main Bazar started). Saves at any other time use today's date.</span>
@@ -838,19 +864,19 @@
               <div class="text-xs text-gray-500 mb-1 uppercase">Open Pana</div>
               <input id="in-main_bazar-p1" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-main_bazar-p1').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-main_bazar-p1').textContent=this.value||'---';calcJodi('main_bazar')">
             </div>
             <div class="text-center">
-              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi</div>
+              <div class="text-xs text-gray-500 mb-1 uppercase">Jodi <span style="background:#1a3a1a;color:#4ade80;font-size:.6rem;padding:1px 5px;border-radius:4px;letter-spacing:.05em;vertical-align:middle;">AUTO</span></div>
               <input id="in-main_bazar-j" type="text" maxlength="2" placeholder="--"
-                class="jodi-input"
-                oninput="document.getElementById('prev-main_bazar-j').textContent=this.value||'--'">
+                class="jodi-input" readonly title="Auto-calculated from panas"
+                style="cursor:not-allowed;opacity:0.85;">
             </div>
             <div class="text-center">
               <div class="text-xs text-gray-500 mb-1 uppercase">Close Pana</div>
               <input id="in-main_bazar-p2" type="text" maxlength="3" placeholder="---"
                 class="pana-input"
-                oninput="document.getElementById('prev-main_bazar-p2').textContent=this.value||'---'">
+                oninput="document.getElementById('prev-main_bazar-p2').textContent=this.value||'---';calcJodi('main_bazar')">
             </div>
           </div>
           <div class="text-xs text-gray-600">
@@ -863,8 +889,19 @@
     <!-- ── ROULETTE PANE ── -->
     <div id="pane-roulette" class="pane">
       <div class="admin-card">
-        <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Roulette Results</div>
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">SATPURA STARLINE Results</div>
         <div class="text-sm text-gray-400 mb-4">Format: <span class="text-[#fba311] font-bold">458-7</span> &nbsp;(3-digit pana + single digit, e.g. 458-7)</div>
+
+        <!-- ✅ Date Picker — allows saving for any date, not just today -->
+        <div class="flex items-center gap-3 mb-4 p-3 bg-[#0a0a0a] rounded-xl border border-[#333]">
+          <label class="text-xs text-gray-400 uppercase tracking-wider whitespace-nowrap">Select Date:</label>
+          <input id="rou-date-picker" type="date"
+            class="bg-[#1c1c1c] border border-[#fba311] text-white px-3 py-1.5 rounded-lg text-sm focus:outline-none focus:border-yellow-300"
+            onchange="loadRouletteForDate(this.value)">
+          <span id="rou-date-label" class="text-[#fba311] font-bold text-sm"></span>
+          <span class="text-xs text-green-400 ml-auto flex items-center gap-1"><i class="fas fa-cloud"></i> Saved to Database</span>
+        </div>
+
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div class="bg-[#1a1a1a] rounded-lg p-3 flex items-center justify-between">
             <span class="text-gray-300 text-sm font-semibold">11:00 AM</span>
@@ -911,7 +948,15 @@
             <input id="rou-in-21" type="text" maxlength="5" placeholder="---·-" class="rou-input">
           </div>
         </div>
-        <div class="mt-4 text-xs text-gray-500">Enter as <span class="text-[#fba311]">458-7</span> (pana dash digit). Leave blank to show "-". Updates both the Index page and Roulette Archive.</div>
+        <div class="mt-4 text-xs text-gray-500">Enter as <span class="text-[#fba311]">458-7</span> (pana dash digit). Leave blank to show "—". Pick any past date above to backfill missed results. Saves directly to Firebase instantly.</div>
+
+        <!-- Save Roulette button (separate from Save All — saves only selected date) -->
+        <div class="mt-4 flex gap-3">
+          <button onclick="saveRouletteOnly()"
+            class="bg-[#fba311] text-black px-5 py-2 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-yellow-400 transition-all flex items-center gap-2">
+            <i class="fas fa-save"></i> Save Roulette for <span id="rou-save-date-label">Today</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -922,6 +967,9 @@
         <div class="space-y-4">
           <div>
             <label class="text-sm text-gray-400 block mb-1">Change Admin Password</label>
+            <div class="text-xs text-green-400 bg-green-900/20 border border-green-800 rounded-lg px-3 py-2 mb-2 flex items-center gap-2">
+              <i class="fas fa-cloud"></i> Password is stored in the database — one password works on <strong>all devices</strong>.
+            </div>
             <div class="flex gap-3">
               <input id="new-pwd" type="password" placeholder="New password"
                 class="bg-[#1c1c1c] border border-[#333] text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-[#fba311] w-48">
@@ -931,10 +979,10 @@
             </div>
           </div>
           <div class="border-t border-[#222] pt-4">
-            <div class="text-sm text-gray-400 mb-2">4:00 AM Auto-Clear</div>
-            <div class="text-xs text-gray-600 leading-relaxed">Every day at 4:00 AM, the Index page market values are automatically reset to "---/--/---". Calendar entries are <span class="text-green-400">not</span> affected — they remain permanently stored.</div>
+            <div class="text-sm text-gray-400 mb-2">6 AM Auto-Clear <span class="text-xs text-green-400 ml-2">(Database-backed)</span></div>
+            <div class="text-xs text-gray-600 leading-relaxed">Every day at 6:00 AM, the Index page market values are automatically reset to "---/--/---". Calendar entries are <span class="text-green-400">never</span> affected. The clear is tracked in the database — it fires on <strong>whichever device first opens the panel after 6:00 AM</strong>, even if no device was open at 6:00 AM exactly.</div>
             <div class="mt-3 bg-[#1a1a1a] rounded-lg p-3 text-xs text-gray-400">
-              Next clear: <span id="settings-clear-time" class="text-yellow-400 font-bold">--:--:--</span>
+              Next clear in: <span id="settings-clear-time" class="text-yellow-400 font-bold">--:--:--</span>
             </div>
           </div>
           <div class="border-t border-[#222] pt-4">
@@ -945,7 +993,7 @@
           </div>
           <div class="border-t border-[#222] pt-4">
             <div class="text-sm text-gray-400 mb-2">Data Storage Info</div>
-            <div class="text-xs text-gray-600">All values are stored in <span class="text-yellow-400 font-bold">Firebase</span> and sync instantly across all devices in real-time.</div>
+            <div class="text-xs text-gray-600">All values (results, password, auto-clear flag) are stored in <span class="text-yellow-400 font-bold">Hostinger MySQL</span> and sync instantly across all devices.</div>
           </div>
         </div>
       </div>
@@ -963,65 +1011,84 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
-//  ADMIN PANEL LOGIC
+//  ADMIN PANEL LOGIC — Hostinger MySQL via API
 // ═══════════════════════════════════════════════════════════
 
 const MARKETS = [
+  'satpura_morning',
   'sridevi_day','time_bazar','madhur_day','supreme_day','milan_day','satpura_day','rajdhani_day','kalyan_day',
   'sridevi_night','madhur_night','supreme_night','milan_night','satpura_night',
   'rajdhani_night','kalyan_night','main_bazar'
 ];
 const MARKET_LABELS = {
-  sridevi_day:'Sridevi Day', time_bazar:'Time Bazar', madhur_day:'Madhur Day',
+  satpura_morning:'Satpura Morning',
+  sridevi_day:'Sridevi', time_bazar:'Time Bazar', madhur_day:'Madhur Day',
   supreme_day:'Supreme Day', milan_day:'Milan Day', satpura_day:'Satpura Day',
-  rajdhani_day:'Rajdhani Day', kalyan_day:'Kalyan Day',
+  rajdhani_day:'Rajdhani Day', kalyan_day:'Kalyan',
   sridevi_night:'Sridevi Night', madhur_night:'Madhur Night', supreme_night:'Supreme Night',
   milan_night:'Milan Night', satpura_night:'Satpura Night', rajdhani_night:'Rajdhani Night',
   kalyan_night:'Kalyan Night', main_bazar:'Main Bazar'
 };
 const ROULETTE_HOURS = [11,12,13,14,15,16,17,18,19,20,21];
 
-// ── Auth ──────────────────────────────────────────────────
-const DEFAULT_PWD = 'admin123';
-function getPassword() { return localStorage.getItem('Satta Matka Result_admin_pwd') || DEFAULT_PWD; }
-
-function doLogin() {
-  const val = document.getElementById('pwd-input').value;
-  if (val === getPassword()) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').classList.remove('hidden');
-    loadAllInputs();
-  } else {
-    document.getElementById('login-error').classList.remove('hidden');
-    document.getElementById('pwd-input').value = '';
-    document.getElementById('pwd-input').focus();
+// ── Auth ─────────────────────────────────────────────────────
+async function doLogin() {
+  const val      = document.getElementById('pwd-input').value;
+  const loginBtn = document.querySelector('#login-screen button');
+  const errEl    = document.getElementById('login-error');
+  loginBtn.textContent = 'Checking…';
+  loginBtn.disabled    = true;
+  errEl.classList.add('hidden');
+  try {
+    const res = await API.getPassword();
+    const correctPwd = res.password || 'admin123';
+    if (val === correctPwd) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').classList.remove('hidden');
+      loadAllInputs();
+      checkAndPerformAutoClear();
+    } else {
+      errEl.classList.remove('hidden');
+      document.getElementById('pwd-input').value = '';
+      document.getElementById('pwd-input').focus();
+    }
+  } catch(e) {
+    errEl.textContent = '❌ Database error. Check connection.';
+    errEl.classList.remove('hidden');
+  } finally {
+    loginBtn.textContent = 'Login';
+    loginBtn.disabled    = false;
   }
 }
 
-function changePwd() {
+async function changePwd() {
   const v = document.getElementById('new-pwd').value.trim();
-  if (!v) return;
-  localStorage.setItem('Satta Matka Result_admin_pwd', v);
-  toast('Password updated!');
-  document.getElementById('new-pwd').value = '';
+  if (!v) { toast('Enter a new password first!'); return; }
+  try {
+    await API.setPassword(v);
+    toast('✓ Password updated on all devices!');
+    document.getElementById('new-pwd').value = '';
+  } catch(e) {
+    toast('❌ Failed to update password.');
+  }
 }
 
-// ── Navigation ────────────────────────────────────────────
+// ── Navigation ────────────────────────────────────────────────
 function showPane(id, el) {
   document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const pane = document.getElementById('pane-' + id);
   if (pane) pane.classList.add('active');
   if (el) el.classList.add('active');
-  const label = MARKET_LABELS[id] || (id === 'roulette' ? 'Roulette' : 'Settings');
+  const label = MARKET_LABELS[id] || (id === 'roulette' ? 'SATPURA STARLINE' : 'Settings');
   document.getElementById('pane-title').textContent = label;
 }
 
-// ── Load existing data into inputs (from Firebase) ───────
-function loadAllInputs() {
-  // Load markets
-  _db.ref('/results/markets').once('value').then(snap => {
-    const markets = snap.val() || {};
+// ── Load existing data into inputs ────────────────────────────
+async function loadAllInputs() {
+  try {
+    const res = await API.getAll();
+    const markets = res.markets || {};
     MARKETS.forEach(mid => {
       const m = markets[mid];
       if (!m) return;
@@ -1029,34 +1096,128 @@ function loadAllInputs() {
       const j  = document.getElementById('in-' + mid + '-j');
       const p2 = document.getElementById('in-' + mid + '-p2');
       if (p1) { p1.value = m.p1 || ''; document.getElementById('prev-' + mid + '-p1').textContent = m.p1 || '---'; }
-      if (j)  { j.value  = m.j  || ''; document.getElementById('prev-' + mid + '-j').textContent  = m.j  || '--'; }
       if (p2) { p2.value = m.p2 || ''; document.getElementById('prev-' + mid + '-p2').textContent = m.p2 || '---'; }
+      // Auto-recalculate jodi from loaded panas
+      calcJodi(mid);
+      // Fallback: if panas incomplete but saved jodi exists, show it
+      if (j && !j.value && m.j) { j.value = m.j; document.getElementById('prev-' + mid + '-j').textContent = m.j; }
     });
-  });
-  // Load roulette
+    if (res.savedAt) document.getElementById('last-saved-display').textContent = res.savedAt;
+  } catch(e) { console.warn('loadAllInputs error', e); }
+
   const todayStr = localDateStr(new Date());
-  _db.ref('/results/roulette/' + todayStr).once('value').then(snap => {
-    const rou = snap.val() || {};
+  const picker   = document.getElementById('rou-date-picker');
+  if (picker) { picker.value = todayStr; picker.max = todayStr; }
+  updateRouDateLabel(todayStr);
+  loadRouletteForDate(todayStr);
+}
+
+// ── Load roulette for a specific date ─────────────────────────
+async function loadRouletteForDate(dateStr) {
+  if (!dateStr) return;
+  updateRouDateLabel(dateStr);
+  ROULETTE_HOURS.forEach(h => {
+    const el = document.getElementById('rou-in-' + h);
+    if (el) el.value = '';
+  });
+  try {
+    const res = await API.getRoulette(dateStr);
+    const rou = res.roulette || {};
     ROULETTE_HOURS.forEach(h => {
       const el = document.getElementById('rou-in-' + h);
       if (el && rou[String(h)] !== undefined) el.value = rou[String(h)];
     });
-  });
-  // Load savedAt
-  _db.ref('/results/savedAt').once('value').then(snap => {
-    if (snap.val()) document.getElementById('last-saved-display').textContent = snap.val();
-  });
+  } catch(e) { console.warn('loadRouletteForDate error', e); }
 }
 
-// local date string helper (avoids UTC timezone shift)
+function updateRouDateLabel(dateStr) {
+  const todayStr = localDateStr(new Date());
+  const isToday  = dateStr === todayStr;
+  const label    = isToday ? 'Today (' + dateStr + ')' : dateStr;
+  const el       = document.getElementById('rou-date-label');
+  const btnEl    = document.getElementById('rou-save-date-label');
+  if (el)    el.textContent    = label;
+  if (btnEl) btnEl.textContent = isToday ? 'Today' : dateStr;
+}
+
+// ── Auto-calculate Jodi from Open & Close Pana ───────────────
+function calcJodi(mid) {
+  const p1El = document.getElementById('in-' + mid + '-p1');
+  const p2El = document.getElementById('in-' + mid + '-p2');
+  const jEl  = document.getElementById('in-' + mid + '-j');
+  const prevJ = document.getElementById('prev-' + mid + '-j');
+  if (!p1El || !p2El || !jEl) return;
+
+  const p1 = p1El.value.trim();
+  const p2 = p2El.value.trim();
+
+  // Calculate open ank (last digit of sum of p1 digits)
+  let openAnk = '', closeAnk = '';
+  if (p1.length === 3 && /^\d{3}$/.test(p1)) {
+    const sum = parseInt(p1[0]) + parseInt(p1[1]) + parseInt(p1[2]);
+    openAnk = String(sum % 10);
+  }
+  // Calculate close ank (last digit of sum of p2 digits)
+  if (p2.length === 3 && /^\d{3}$/.test(p2)) {
+    const sum = parseInt(p2[0]) + parseInt(p2[1]) + parseInt(p2[2]);
+    closeAnk = String(sum % 10);
+  }
+
+  // Build jodi only when both anks are known
+  if (openAnk !== '' && closeAnk !== '') {
+    const jodi = openAnk + closeAnk;
+    jEl.value = jodi;
+    if (prevJ) prevJ.textContent = jodi;
+  } else if (openAnk !== '' && closeAnk === '' && p2.length === 0) {
+    // If close pana empty, clear jodi
+    jEl.value = '';
+    if (prevJ) prevJ.textContent = '--';
+  }
+}
+
+// ── Sort pana digits ascending (0 is highest) ─────────────────
+function sortPanaDigits(val) {
+  if (!val) return val;
+  const m = val.match(/^(\d{3})-(\d)$/);
+  if (!m) return val;
+  const sorted = m[1].split('').sort((a, b) => {
+    const av = a === '0' ? 10 : parseInt(a);
+    const bv = b === '0' ? 10 : parseInt(b);
+    return av - bv;
+  }).join('');
+  return sorted + '-' + m[2];
+}
+
+// ── Save Roulette Only ────────────────────────────────────────
+async function saveRouletteOnly() {
+  const picker  = document.getElementById('rou-date-picker');
+  const dateStr = picker ? picker.value : localDateStr(new Date());
+  if (!dateStr) { toast('Please select a date first!'); return; }
+  const hours = {};
+  ROULETTE_HOURS.forEach(h => {
+    const el  = document.getElementById('rou-in-' + h);
+    const val = el ? el.value.trim() : '';
+    if (val) hours[String(h)] = sortPanaDigits(val);
+  });
+  if (!Object.keys(hours).length) { toast('⚠️ No results entered!'); return; }
+  try {
+    await API.saveRoulette(dateStr, hours);
+    const savedAt = new Date().toLocaleString('en-IN');
+    document.getElementById('last-saved-display').textContent = savedAt;
+    toast('✓ Roulette saved for ' + dateStr + '!');
+    showStatus('✅ SATPURA STARLINE results saved for ' + dateStr + ' — visible on all devices!');
+  } catch(e) { toast('❌ Database error: ' + e.message); }
+}
+
+// local date string helper
 function localDateStr(d) {
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
   return y+'-'+m+'-'+dd;
 }
 
-// ── Save All ──────────────────────────────────────────────
-function saveAll() {
-  const markets = {};
+// ── Save All ──────────────────────────────────────────────────
+async function saveAll() {
+  const markets  = {};
   MARKETS.forEach(mid => {
     markets[mid] = {
       p1: (document.getElementById('in-' + mid + '-p1')?.value || '').trim(),
@@ -1065,17 +1226,10 @@ function saveAll() {
     };
   });
 
-  const roulette = {};
-  ROULETTE_HOURS.forEach(h => {
-    const el = document.getElementById('rou-in-' + h);
-    roulette[String(h)] = el ? el.value.trim() : '';
-  });
-
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
+  const now      = new Date();
+  const todayStr = localDateStr(now);
   const savedAt  = now.toLocaleString('en-IN');
 
-  // ── Main Bazar late-night date shift ──────────────────────────────
   function calDateFor(mid) {
     if (mid !== 'main_bazar') return todayStr;
     const h = now.getHours(), m2 = now.getMinutes();
@@ -1086,64 +1240,54 @@ function saveAll() {
     return todayStr;
   }
 
-  // Write all data to Firebase
-  const fbPayload = { markets, roulette: {}, savedAt };
-  // Markets → /results/markets/<id>
-  MARKETS.forEach(mid => { fbPayload[mid] = markets[mid]; });
-
-  _db.ref('/results/markets').set(markets);
-  _db.ref('/results/savedAt').set(savedAt);
-
-  // Calendar entries → /results/calendar/<marketId>/<date>/
+  const calendar = {};
   MARKETS.forEach(mid => {
     const m = markets[mid];
     if (m.p1 || m.j || m.p2) {
-      _db.ref('/results/calendar/' + mid + '/' + calDateFor(mid)).set(m);
+      if (!calendar[mid]) calendar[mid] = {};
+      calendar[mid][calDateFor(mid)] = m;
     }
   });
 
-  // Roulette → /results/roulette/<date>/<hour>
-  const rouData = {};
+  const picker     = document.getElementById('rou-date-picker');
+  const rouDateStr = (picker && picker.value) ? picker.value : todayStr;
+  const rouHours   = {};
   ROULETTE_HOURS.forEach(h => {
-    if (roulette[String(h)]) rouData[String(h)] = roulette[String(h)];
+    const el = document.getElementById('rou-in-' + h);
+    const v  = el ? el.value.trim() : '';
+    if (v) rouHours[String(h)] = sortPanaDigits(v);
   });
-  if (Object.keys(rouData).length) {
-    _db.ref('/results/roulette/' + todayStr).set(rouData);
-  }
 
-  document.getElementById('last-saved-display').textContent = savedAt;
-
-  const mainBazarCalDate = calDateFor('main_bazar');
-  const mainBazarNote = (mainBazarCalDate !== todayStr)
-    ? ' · ⚠️ Main Bazar saved to calendar date: ' + mainBazarCalDate + ' (late-night close)' : '';
-  showStatus('✅ Saved at ' + savedAt + ' — Firebase updated for all devices!' + mainBazarNote);
-  toast('✓ Saved to Firebase!');
+  try {
+    await API.saveAll({ markets, calendar, roulette: { date: rouDateStr, hours: rouHours }, savedAt });
+    document.getElementById('last-saved-display').textContent = savedAt;
+    const mainBazarCalDate = calDateFor('main_bazar');
+    const note = (mainBazarCalDate !== todayStr)
+      ? ' · ⚠️ Main Bazar saved to calendar date: ' + mainBazarCalDate + ' (late-night close)' : '';
+    showStatus('✅ Saved at ' + savedAt + ' — Database updated for all devices!' + note);
+    toast('✓ Saved to Database!');
+  } catch(e) { toast('❌ Database error: ' + e.message); }
 }
 
-// ── Clear ALL Data (universal) ────────────────────────────
-function clearAllData() {
-  if (!confirm('⚠️ CLEAR ALL DATA?\n\nThis will reset:\n• Index panel (--- -- ---)\n• All roulette results\n• Today\'s calendar entries\n\nPermanent calendar history is NOT affected.\n\nProceed?')) return;
+// ── 6AM Auto-Clear ────────────────────────────────────────────
+async function checkAndPerformAutoClear() {
+  const now = new Date();
+  if (now.getHours() < 6) return;
+  const todayStr = localDateStr(now);
+  try {
+    const res = await API.getLastClear();
+    if (res.lastClearDate === todayStr) return;
+    await API.autoClear(todayStr);
+    clearAllDataAuto(true);
+  } catch(e) { console.warn('Auto-clear check failed:', e); }
+}
 
-  // 1. Clear markets from Firebase
-  _db.ref('/results/markets').remove();
-  _db.ref('/results/savedAt').remove();
-
-  // 2. Clear today's roulette from Firebase
-  const todayStr = localDateStr(new Date());
-  _db.ref('/results/roulette/' + todayStr).remove();
-
-  // 3. Clear today's calendar entries from Firebase
-  MARKETS.forEach(mid => {
-    _db.ref('/results/calendar/' + mid + '/' + todayStr).remove();
-  });
-
-  // 4. Clear all inputs in admin panel
+function clearAllDataAuto(fromCheck) {
   MARKETS.forEach(mid => {
     ['p1','j','p2'].forEach(f => {
       const el = document.getElementById('in-' + mid + '-' + f);
       if (el) el.value = '';
     });
-    // Reset previews
     const pp1 = document.getElementById('prev-' + mid + '-p1');
     const pj  = document.getElementById('prev-' + mid + '-j');
     const pp2 = document.getElementById('prev-' + mid + '-p2');
@@ -1155,86 +1299,108 @@ function clearAllData() {
     const el = document.getElementById('rou-in-' + h);
     if (el) el.value = '';
   });
-
-  document.getElementById('last-saved-display').textContent = 'All Cleared';
-  showStatus('🗑️ ALL data cleared — Index, Roulette & today\'s calendar entries reset to --- -- ---');
-  toast('✓ All Data Cleared!');
+  document.getElementById('last-saved-display').textContent = fromCheck ? '6AM Auto-Cleared (DB)' : 'Auto Cleared at 6:00 AM';
+  showStatus('6:00 AM Auto-Clear complete — Index reset to ---. Calendar history preserved.');
+  toast('🔄 6AM Auto-Clear Done!');
 }
 
-// ── Clear Index ───────────────────────────────────────────
-function clearIndex() {
-  if (!confirm('Clear all Index panel values? (Calendar entries are NOT affected)')) return;
-  _db.ref('/results/markets').remove();
-  _db.ref('/results/savedAt').remove();
-
-  // Clear all inputs
-  MARKETS.forEach(mid => {
-    ['p1','j','p2'].forEach(f => {
-      const el = document.getElementById('in-' + mid + '-' + f);
+// ── Clear ALL Data ────────────────────────────────────────────
+async function clearAllData() {
+  if (!confirm('⚠️ CLEAR ALL DATA?\n\nThis will reset:\n• Index panel (--- -- ---)\n• All roulette results\n• Today\'s calendar entries\n\nPermanent calendar history is NOT affected.\n\nProceed?')) return;
+  const todayStr = localDateStr(new Date());
+  try {
+    await API.clearToday(todayStr);
+    MARKETS.forEach(mid => {
+      ['p1','j','p2'].forEach(f => {
+        const el = document.getElementById('in-' + mid + '-' + f);
+        if (el) el.value = '';
+      });
+      ['p1','j','p2'].forEach(s => {
+        const el = document.getElementById('prev-' + mid + '-' + (s==='j'?'j':s));
+        if (!el) return;
+        el.textContent = s === 'j' ? '--' : '---';
+      });
+    });
+    ROULETTE_HOURS.forEach(h => {
+      const el = document.getElementById('rou-in-' + h);
       if (el) el.value = '';
     });
-  });
-  ROULETTE_HOURS.forEach(h => {
-    const el = document.getElementById('rou-in-' + h);
-    if (el) el.value = '';
-  });
-
-  document.getElementById('last-saved-display').textContent = 'Cleared';
-  showStatus('🗑️ Index panel cleared on Firebase. Calendar entries are safe.');
-  toast('Index Cleared!');
+    document.getElementById('last-saved-display').textContent = 'All Cleared';
+    showStatus('🗑️ ALL data cleared — Index, SATPURA STARLINE & today\'s calendar entries reset.');
+    toast('✓ All Data Cleared!');
+  } catch(e) { toast('❌ Database error: ' + e.message); }
 }
 
-// ── Toast ─────────────────────────────────────────────────
+// ── Clear Index ───────────────────────────────────────────────
+async function clearIndex() {
+  if (!confirm('Clear all Index panel values? (Calendar entries are NOT affected)')) return;
+  try {
+    await API.clearMarkets();
+    MARKETS.forEach(mid => {
+      ['p1','j','p2'].forEach(f => {
+        const el = document.getElementById('in-' + mid + '-' + f);
+        if (el) el.value = '';
+      });
+    });
+    ROULETTE_HOURS.forEach(h => {
+      const el = document.getElementById('rou-in-' + h);
+      if (el) el.value = '';
+    });
+    document.getElementById('last-saved-display').textContent = 'Cleared';
+    showStatus('🗑️ Index panel cleared. Calendar entries are safe.');
+    toast('Index Cleared!');
+  } catch(e) { toast('❌ Database error: ' + e.message); }
+}
+
+// ── Toast ─────────────────────────────────────────────────────
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
-
 function showStatus(msg) {
   const sb = document.getElementById('status-bar');
   document.getElementById('status-msg').textContent = msg;
   sb.classList.remove('hidden');
 }
 
-// ── Clock & 4AM Countdown ─────────────────────────────────
+// ── Clock & 6AM Auto-Clear Countdown ─────────────────────────
+let _clockAutoClearFired = false;
 function updateClock() {
-  const now   = new Date();
-  const next4 = new Date(now);
-  next4.setHours(4, 0, 0, 0);
-  if (now >= next4) next4.setDate(next4.getDate() + 1);
-
-  const diff  = next4 - now;
-  const hh    = String(Math.floor(diff / 3600000)).padStart(2, '0');
-  const mm    = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-  const ss    = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-  const countdown = hh + ':' + mm + ':' + ss;
-
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  if (h === 6 && m === 0 && s < 10) {
+    if (!_clockAutoClearFired) {
+      _clockAutoClearFired = true;
+      checkAndPerformAutoClear();
+    }
+  } else if (h !== 6 || m >= 1) {
+    _clockAutoClearFired = false;
+  }
+  const next6 = new Date(now);
+  next6.setHours(6,0,0,0);
+  if (now >= next6) next6.setDate(next6.getDate()+1);
+  const diff = next6 - now;
+  const hh = String(Math.floor(diff/3600000)).padStart(2,'0');
+  const mm = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  const ss = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+  const countdown = hh+':'+mm+':'+ss;
   const dateOpts = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
   const timeOpts = { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true };
-
   document.getElementById('sb-time').textContent = now.toLocaleTimeString('en-IN', timeOpts);
   document.getElementById('sb-date').textContent = now.toLocaleDateString('en-IN', dateOpts);
   document.getElementById('clear-timer').textContent = countdown;
-
   const sct = document.getElementById('settings-clear-time');
   if (sct) sct.textContent = countdown;
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ── Enter key for login ───────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
-    doLogin();
-  }
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
 });
-
-// Focus password field
-window.addEventListener('load', () => {
-  document.getElementById('pwd-input').focus();
-});
+window.addEventListener('load', () => { document.getElementById('pwd-input').focus(); });
 </script>
 </body>
 </html>
